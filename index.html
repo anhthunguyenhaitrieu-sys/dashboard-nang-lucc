@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Đánh Giá Năng Lực Nhân Sự</title>
+    <title>Hệ Thống Đánh Giá Năng Lực Nhân Sự - Live Drive</title>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -20,19 +20,28 @@
                 <i class="fa-solid fa-lock-open"></i>
             </div>
             <h2 class="text-2xl font-bold text-slate-800 mb-1">Hệ Thống Dashboard</h2>
-            <p class="text-xs text-slate-400 mb-6">Vui lòng sử dụng tài khoản được cấp quyền</p>
+            <p class="text-xs text-slate-400 mb-6">Dữ liệu kết nối trực tuyến Google Drive</p>
             <div class="space-y-4 text-left">
                 <div>
-                    <label class="text-xs font-semibold text-slate-600 block mb-1">Email của bạn</label>
+                    <label class="text-xs font-semibold text-slate-600 block mb-1">Email quản trị viên</label>
                     <input type="email" id="email" class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="anhthunguyen.haitrieu@gmail.com">
                 </div>
                 <div>
-                    <label class="text-xs font-semibold text-slate-600 block mb-1">Mật khẩu cấp phát</label>
+                    <label class="text-xs font-semibold text-slate-600 block mb-1">Mật khẩu hệ thống</label>
                     <input type="password" id="password" class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="••••••••">
                 </div>
-                <p id="login-error" class="text-xs text-red-500 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Tài khoản hoặc mật khẩu không chính xác!</p>
-                <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-100">Đăng Nhập Hệ Thống <i class="fa-solid fa-arrow-right-to-bracket ml-1"></i></button>
+                <p id="login-error" class="text-xs text-red-500 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Tài khoản hoặc mật khẩu chưa chính xác!</p>
+                <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
+                    <span>Đăng Nhập Hệ Thống</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>
+                </button>
             </div>
+        </div>
+    </div>
+
+    <div id="loading-screen" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white px-6 py-4 rounded-xl shadow-xl flex items-center gap-3 border border-slate-100">
+            <i class="fa-solid fa-circle-notch animate-spin text-indigo-600 text-lg"></i>
+            <span class="text-xs font-medium text-slate-700">Đang đồng bộ dữ liệu thực tế từ Drive...</span>
         </div>
     </div>
 
@@ -45,12 +54,12 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-slate-800 text-sm leading-tight">Báo Cáo Năng Lực</h1>
-                        <span class="text-[11px] font-medium text-emerald-500 bg-emerald-50 px-1.5 py-0.5 rounded-md mt-0.5 inline-block">Dữ Liệu Hệ Thống</span>
+                        <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md mt-0.5 inline-block"><i class="fa-solid fa-cloud-arrow-down mr-0.5"></i> Live Drive Connected</span>
                     </div>
                 </div>
                 <nav class="space-y-1.5">
                     <button onclick="switchTab('trang-chu')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-600 font-medium rounded-xl text-xs hover:bg-slate-50 transition bg-indigo-50 text-indigo-600 font-semibold" data-tab="trang-chu">
-                        <i class="fa-solid fa-grid-2 text-base"></i> <i class="fa-solid fa-chart-pie mr-1 text-base"></i> Trang Chủ Tổng Quan
+                        <i class="fa-solid fa-chart-pie text-base"></i> Trang Chủ Tổng Quan
                     </button>
                     <div class="pt-4 pb-1 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Trang chi tiết vị trí</div>
                     <button onclick="switchTab('gd-hcm')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-600 font-medium rounded-xl text-xs hover:bg-slate-50 transition" data-tab="gd-hcm">
@@ -70,7 +79,7 @@
             <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
                 <div class="flex items-center gap-2">
                     <div class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></div>
-                    <span class="truncate max-w-[140px]">anhthunguyen...</span>
+                    <span class="truncate max-w-[140px]" id="user-display">anhthunguyen...</span>
                 </div>
                 <button onclick="logout()" class="text-red-500 hover:text-red-700 font-medium transition"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất</button>
             </div>
@@ -79,9 +88,14 @@
         <main class="flex-1 p-8 overflow-y-auto">
             
             <section id="tab-trang-chu" class="tab-content space-y-8">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-800">Thống Kê Dữ Liệu Toàn Diện</h2>
-                    <p class="text-xs text-slate-400 mt-1">Dữ liệu phân tích tổng hợp điểm số trung bình thực tế của toàn bộ các khu vực và vị trí</p>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Thống Kê Năng Lực Toàn Tổng</h2>
+                        <p class="text-xs text-slate-400 mt-1">Dữ liệu phân tích điểm số trung bình thực tế được đồng bộ tự động từ Google Drive</p>
+                    </div>
+                    <button onclick="syncDataLive()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-slate-200">
+                        <i class="fa-solid fa-arrow-rotate-right"></i> Làm mới dữ liệu Drive
+                    </button>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
@@ -116,7 +130,7 @@
             <section id="tab-department" class="tab-content hidden space-y-6">
                 <div>
                     <h2 id="dept-title" class="text-2xl font-bold text-slate-800">Tên Vị Trí Phòng Ban</h2>
-                    <p class="text-xs text-slate-400 mt-1">Hệ thống biểu đồ năng lực trực quan của từng nhân sự, click chọn tên nhân viên để hiển thị sơ đồ Radar Chart</p>
+                    <p class="text-xs text-slate-400 mt-1">Chọn tên nhân sự để hiển thị mô hình Radar phân tích chi tiết năng lực chuẩn định biên</p>
                 </div>
                 
                 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -142,16 +156,28 @@
         </main>
     </div>
 
-    <script src="data.js"></script>
     <script>
-        // --- CHỨC NĂNG 1: QUẢN LÝ ĐĂNG NHẬP ---
+        // =========================================================================
+        // CHÚ Ý: BẠN HÃY DÁN ĐƯỜNG LINK XUẤT BẢN CSV CỦA GOOGLE SHEETS VÀO ĐÂY NHÉ:
+        // =========================================================================
+        const GOOGLE_SHEET_CSV_URL = https://docs.google.com/spreadsheets/d/e/2PACX-1vRsAhDPrI_6zhx6FNWWA_JODjc4Pk49kNPQrebP0dXFnXmqblzLlV794k8JndREi0q5qu-Ddlm1Qro9/pub?output=csv;
+
+        // Kho lưu trữ đối tượng chứa dữ liệu sau khi đồng bộ
+        let evaluationData = {
+            "gdoc_hcm": [],
+            "gdoc_dnb": [],
+            "tpkd_hcm": [],
+            "tpkd_dnb": []
+        };
+
+        // --- ĐĂNG NHẬP ---
         function handleLogin() {
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('password').value.trim();
             if(email === 'anhthunguyen.haitrieu@gmail.com' && pass === '123456') {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
-                initTrangChu();
+                syncDataLive(); // Đăng nhập thành công -> Gọi cơ chế đồng bộ Drive ngay
             } else {
                 document.getElementById('login-error').classList.remove('hidden');
             }
@@ -161,11 +187,78 @@
             document.getElementById('main-app').classList.add('hidden');
         }
 
-        // --- CHỨC NĂNG 2: CHUYỂN TRANG CHUYÊN NGHIỆP (TAB CODES) ---
+        // --- THUẬT TOÁN KẾT NỐI LIVE VÀ BÓC TÁCH DỮ LIỆU GOOGLE DRIVE ---
+        async function syncDataLive() {
+            if (GOOGLE_SHEET_CSV_URL === "ĐƯỜNG_LINK_XUẤT_BẢN_CSV_CỦA_BẠN_Ở_ĐÂY") {
+                alert("Vui lòng cấu hình đường link Google Sheets của bạn vào mã nguồn trước khi chạy thực tế!");
+                return;
+            }
+            
+            document.getElementById('loading-screen').classList.remove('hidden');
+            
+            try {
+                // Khởi tạo lại kho dữ liệu sạch
+                evaluationData = { "gdoc_hcm": [], "gdoc_dnb": [], "tpkd_hcm": [], "tpkd_dnb": [] };
+                
+                // Các mã định danh trang tính phụ từ Google Sheet tương ứng 4 vị trí
+                const tabs = ["gdoc_hcm", "gdoc_dnb", "tpkd_hcm", "tpkd_dnb"];
+                
+                for (let tab of tabs) {
+                    // Cơ chế gọi và đọc trực tiếp file CSV riêng của từng trang tính thông qua tham số gid
+                    // Mẹo: Bản csv tổng hợp của Google Sheets cho phép kéo link theo tab bằng cách thêm thuộc tính tên tab
+                    let fetchUrl = GOOGLE_SHEET_CSV_URL + `&sheet=${tab}&tqx=out:csv`;
+                    
+                    const res = await fetch(fetchUrl);
+                    const rawCsv = await res.text();
+                    
+                    // Phân tích cú pháp dữ liệu dạng dòng chữ thành mảng dữ liệu có logic
+                    parseSingleTabCsv(rawCsv, tab);
+                }
+                
+                // Đồng bộ hoàn tất -> Vẽ dữ liệu lên trang chủ
+                initTrangChu();
+                
+            } catch (err) {
+                console.error("Lỗi đồng bộ dữ liệu Drive:", err);
+                alert("Không thể kết nối với Google Drive. Hãy kiểm tra lại link cấu hình hoặc cài đặt chia sẻ công khai của file!");
+            } finally {
+                document.getElementById('loading-screen').classList.add('hidden');
+            }
+        }
+
+        function parseSingleTabCsv(csvText, tabKey) {
+            const lines = csvText.split(/\r?\n/);
+            if (lines.length < 4) return; // File rỗng hoặc sai cấu trúc bỏ qua
+
+            // Quét từ dòng thứ 4 trở đi (Bỏ qua tiêu đề dòng 1, 2, 3)
+            for (let i = 3; i < lines.length; i++) {
+                let currentLine = lines[i].trim();
+                if (!currentLine) continue;
+                
+                // Xử lý loại bỏ dấu ngoặc kép nếu có do định dạng CSV tự tạo ra
+                let columns = currentLine.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                columns = columns.map(col => col.replace(/^"|"$/g, '').trim());
+
+                if (columns[0] && columns[0] !== "" && !columns[0].includes("Điểm")) {
+                    let record = {
+                        name: columns[0],
+                        van_hoa: parseFloat(columns[1]) || 0,
+                        van_hoa_chuan: parseFloat(columns[2]) || 3,
+                        tuyen_dung: parseFloat(columns[3]) || 0,
+                        tuyen_dung_chuan: parseFloat(columns[4]) || 3,
+                        kinh_doanh: parseFloat(columns[5]) || 0,
+                        kinh_doanh_chuan: parseFloat(columns[6]) || 3
+                    };
+                    evaluationData[tabKey].push(record);
+                }
+            }
+        }
+
+        // --- ĐIỀU HƯỚNG TAB MÀN HÌNH ---
         function switchTab(tabName) {
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'font-semibold');
-                if(btn.getAttribute('data-tab') === tabName) btn.classList.add('bg-indigo-50', 'text-indigo-600', 'font-semibold');
+                btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-600 font-medium rounded-xl text-xs hover:bg-slate-50 transition";
+                if(btn.getAttribute('data-tab') === tabName) btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 font-medium rounded-xl text-xs transition bg-indigo-50 text-indigo-600 font-semibold";
             });
 
             if(tabName === 'trang-chu') {
@@ -179,28 +272,27 @@
             }
         }
 
-        // --- CHỨC NĂNG 3: TÍNH TOÁN DỮ LIỆU THỰC TẾ & VẼ BIỂU ĐỒ TRANG CHỦ ---
+        // --- XỬ LÝ BIỂU ĐỒ TRANG CHỦ TỔNG QUAN ---
         let chartSL, chartTBC;
         function initTrangChu() {
-            const listG_HCM = evaluationData.gdoc_hcm;
-            const listG_DNB = evaluationData.gdoc_dnb;
-            const listT_HCM = evaluationData.tpkd_hcm;
-            const listT_DNB = evaluationData.tpkd_dnb;
+            const listG_HCM = evaluationData.gdoc_hcm || [];
+            const listG_DNB = evaluationData.gdoc_dnb || [];
+            const listT_HCM = evaluationData.tpkd_hcm || [];
+            const listT_DNB = evaluationData.tpkd_dnb || [];
 
             const totalStaff = listG_HCM.length + listG_DNB.length + listT_HCM.length + listT_DNB.length;
             document.getElementById('stat-total').innerText = totalStaff;
 
-            // Thuật toán quét vòng lặp tính Điểm trung bình thực tế từ các file đính kèm
+            if(totalStaff === 0) return; // Phòng ngừa dữ liệu rỗng
+
             let sumVH = 0, sumTD = 0, sumKD = 0;
             const allStaff = [...listG_HCM, ...listG_DNB, ...listT_HCM, ...listT_DNB];
-            allStaff.forEach(s => {
-                sumVH += s.van_hoa; sumTD += s.tuyen_dung; sumKD += s.kinh_doanh;
-            });
+            allStaff.forEach(s => { sumVH += s.van_hoa; sumTD += s.tuyen_dung; sumKD += s.kinh_doanh; });
+            
             document.getElementById('stat-vh').innerText = (sumVH / totalStaff).toFixed(2);
             document.getElementById('stat-td').innerText = (sumTD / totalStaff).toFixed(2);
             document.getElementById('stat-kd').innerText = (sumKD / totalStaff).toFixed(2);
 
-            // Tính điểm trung bình theo từng khu vực (HCM vs Đông Nam Bộ) để vẽ biểu đồ đường trực quan
             let hcmVH = 0, hcmTD = 0, hcmKD = 0, countHCM = listG_HCM.length + listT_HCM.length;
             [...listG_HCM, ...listT_HCM].forEach(s => { hcmVH += s.van_hoa; hcmTD += s.tuyen_dung; hcmKD += s.kinh_doanh; });
             
@@ -210,7 +302,6 @@
             if(chartSL) chartSL.destroy();
             if(chartTBC) chartTBC.destroy();
 
-            // Vẽ Biểu Đồ Số Lượng Nhân Sự Cột Kép
             chartSL = new Chart(document.getElementById('chart-soluong'), {
                 type: 'bar',
                 data: {
@@ -223,22 +314,21 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Lexend', size: 10 } } } } }
             });
 
-            // Vẽ Biểu Đồ Đường Xu Hướng Năng Lực Trung Bình Khu Vực
             chartTBC = new Chart(document.getElementById('chart-diem-trungbinh'), {
                 type: 'line',
                 data: {
                     labels: ['Văn Hoá FPT', 'Tuyển Dụng', 'Kinh Doanh'],
                     datasets: [
                         { label: 'Điểm Chuẩn Định Biên', data: [3, 3, 3], borderColor: '#94a3b8', borderDash: [6, 6], fill: false, tension: 0.1 },
-                        { label: 'Điểm TB Khu Vực HCM', data: [(hcmVH/countHCM).toFixed(2), (hcmTD/countHCM).toFixed(2), (hcmKD/countHCM).toFixed(2)], borderColor: '#4338ca', fill: false, tension: 0.2 },
-                        { label: 'Điểm TB Khu Vực DNB', data: [(dnbVH/countDNB).toFixed(2), (dnbTD/countDNB).toFixed(2), (dnbKD/countDNB).toFixed(2)], borderColor: '#059669', fill: false, tension: 0.2 }
+                        { label: 'Điểm TB Khu Vực HCM', data: [countHCM ? (hcmVH/countHCM).toFixed(2) : 0, countHCM ? (hcmTD/countHCM).toFixed(2) : 0, countHCM ? (hcmKD/countHCM).toFixed(2) : 0], borderColor: '#4338ca', fill: false, tension: 0.2 },
+                        { label: 'Điểm TB Khu Vực DNB', data: [countDNB ? (dnbVH/countDNB).toFixed(2) : 0, countDNB ? (dnbTD/countDNB).toFixed(2) : 0, countDNB ? (dnbKD/countDNB).toFixed(2) : 0], borderColor: '#059669', fill: false, tension: 0.2 }
                     ]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Lexend', size: 10 } } } } }
             });
         }
 
-        // --- CHỨC NĂNG 4: XỬ LÝ TRANG DANH SÁCH CHI TIẾT & BIỂU ĐỒ RADAR TỪNG NHÂN SỰ ---
+        // --- XỬ LÝ CHI TIẾT RADAR TỪNG NHÂN SỰ ---
         let radarChart;
         function setupDepartmentPage(tabName) {
             let title = "", dataKey = "";
@@ -251,8 +341,13 @@
             const listContainer = document.getElementById('user-list');
             listContainer.innerHTML = ""; 
 
-            const users = evaluationData[dataKey];
+            const users = evaluationData[dataKey] || [];
             
+            if (users.length === 0) {
+                listContainer.innerHTML = `<p class="text-xs text-slate-400 p-4 italic">Không có dữ liệu nhân sự trên Drive</p>`;
+                return;
+            }
+
             users.forEach((user, idx) => {
                 const btn = document.createElement('button');
                 btn.className = `w-full text-left px-4 py-3 rounded-xl text-xs font-medium transition flex items-center justify-between border ${idx === 0 ? 'bg-indigo-50 border-indigo-100 text-indigo-600 font-semibold' : 'text-slate-600 border-slate-50 hover:bg-slate-50'}`;
@@ -268,16 +363,15 @@
                 listContainer.appendChild(btn);
             });
 
-            if(users.length > 0) updateRadarChart(users[0]);
+            updateRadarChart(users[0]);
         }
 
         function updateRadarChart(user) {
-            document.getElementById('radar-title').innerHTML = `<i class="fa-solid fa-circle-nodes text-purple-500 mr-1"></i> Biểu đồ Radar năng lực nhân sự: <span class="text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded-md ml-1">${user.name}</span>`;
+            document.getElementById('radar-title').innerHTML = `<i class="fa-solid fa-circle-nodes text-purple-500 mr-1"></i> Biểu đồ Radar năng lực: <span class="text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded-md ml-1">${user.name}</span>`;
             
-            // Cập nhật nhãn số liệu nhanh dưới chân biểu đồ
-            document.getElementById('lbl-vh').innerText = user.van_hoa;
-            document.getElementById('lbl-td').innerText = user.tuyen_dung;
-            document.getElementById('lbl-kd').innerText = user.kinh_doanh;
+            document.getElementById('lbl-vh').innerText = user.van_hoa.toFixed(1);
+            document.getElementById('lbl-td').innerText = user.tuyen_dung.toFixed(1);
+            document.getElementById('lbl-kd').innerText = user.kinh_doanh.toFixed(1);
 
             if(radarChart) radarChart.destroy();
             
@@ -292,8 +386,6 @@
                             backgroundColor: 'rgba(99, 102, 241, 0.15)',
                             borderColor: '#6366f1',
                             pointBackgroundColor: '#4f46e5',
-                            pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: '#4f46e5',
                             borderWidth: 2
                         },
                         {
@@ -301,7 +393,6 @@
                             data: [user.van_hoa_chuan, user.tuyen_dung_chuan, user.kinh_doanh_chuan],
                             backgroundColor: 'rgba(148, 163, 184, 0.05)',
                             borderColor: '#94a3b8',
-                            pointBackgroundColor: '#94a3b8',
                             borderDash: [4, 4],
                             borderWidth: 1.5
                         }
