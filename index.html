@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Đánh Giá Năng Lực Nhân Sự</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Lexend', sans-serif; background-color: #f8fafc; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-96 text-center border border-slate-100">
+            <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl animate-bounce">
+                <i class="fa-solid fa-lock-open"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 mb-1">Hệ Thống Dashboard</h2>
+            <p class="text-xs text-slate-400 mb-6">Vui lòng sử dụng tài khoản được cấp quyền</p>
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="text-xs font-semibold text-slate-600 block mb-1">Email của bạn</label>
+                    <input type="email" id="email" class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="anhthunguyen.haitrieu@gmail.com">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-600 block mb-1">Mật khẩu cấp phát</label>
+                    <input type="password" id="password" class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="••••••••">
+                </div>
+                <p id="login-error" class="text-xs text-red-500 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Tài khoản hoặc mật khẩu không chính xác!</p>
+                <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-100">Đăng Nhập Hệ Thống <i class="fa-solid fa-arrow-right-to-bracket ml-1"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-app" class="hidden flex min-h-screen">
+        <aside class="w-80 bg-white border-r border-slate-100 p-6 flex flex-col justify-between shadow-sm shrink-0">
+            <div>
+                <div class="flex items-center gap-3 mb-8 px-2">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white text-lg font-bold shadow-md shadow-indigo-200">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-slate-800 text-sm leading-tight">Báo Cáo Năng Lực</h1>
+                        <span class="text-[11px] font-medium text-emerald-500 bg-emerald-50 px-1.5 py-0.5 rounded-md mt-0.5 inline-block">Dữ Liệu Hệ Thống</span>
+                    </div>
+                </div>
+                <nav class="space-y-1.5">
+                    <button onclick="switchTab('trang-chu')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-600 font-medium rounded-xl text-xs hover:bg-slate-50 transition bg-indigo-50 text-indigo-600 font-semibold" data-tab="trang-chu">
+                        <i class="fa-solid fa-grid-2 text-base"></i> <i class="fa-solid fa-chart-pie mr-1 text-base"></i> Trang Chủ Tổng Quan
+                    </button>
+                    <div class="pt-4 pb-1 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Trang chi tiết vị trí</div>
+                    <button onclick="switchTab('gd-hcm')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-600 font-medium rounded-xl text-xs hover:bg-slate-50 transition" data-tab="gd-hcm">
+                        <i class="fa-solid fa-user-tie text-base"></i> GĐ Chi Nhánh Hồ Chí Minh
+                    </button>
+                    <button onclick="switchTab('gd-dnb')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-600 font-medium rounded-xl text-xs hover:bg-slate-50 transition" data-tab="gd-dnb">
+                        <i class="fa-solid fa-user-tie text-base"></i> GĐ Chi Nhánh Đông Nam Bộ
+                    </button>
+                    <button onclick="switchTab('tp-hcm')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-600 font-medium rounded-xl text-xs hover:bg-slate-50 transition" data-tab="tp-hcm">
+                        <i class="fa-solid fa-users-gear text-base"></i> Trưởng Phòng KD Hồ Chí Minh
+                    </button>
+                    <button onclick="switchTab('tp-dnb')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-600 font-medium rounded-xl text-xs hover:bg-slate-50 transition" data-tab="tp-dnb">
+                        <i class="fa-solid fa-users-gear text-base"></i> Trưởng Phòng KD Đông Nam Bộ
+                    </button>
+                </nav>
+            </div>
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></div>
+                    <span class="truncate max-w-[140px]">anhthunguyen...</span>
+                </div>
+                <button onclick="logout()" class="text-red-500 hover:text-red-700 font-medium transition"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất</button>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-8 overflow-y-auto">
+            
+            <section id="tab-trang-chu" class="tab-content space-y-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Thống Kê Dữ Liệu Toàn Diện</h2>
+                    <p class="text-xs text-slate-400 mt-1">Dữ liệu phân tích tổng hợp điểm số trung bình thực tế của toàn bộ các khu vực và vị trí</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-id-card-clip"></i></div>
+                        <div><span class="text-[11px] font-medium text-slate-400 block">Tổng nhân sự đánh giá</span><span class="text-2xl font-bold text-slate-800" id="stat-total">0</span></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-gavel"></i></div>
+                        <div><span class="text-[11px] font-medium text-slate-400 block">ĐTB Văn Hóa FPT</span><span class="text-2xl font-bold text-slate-800" id="stat-vh">0.0</span></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-user-plus"></i></div>
+                        <div><span class="text-[11px] font-medium text-slate-400 block">ĐTB Tuyển Dụng</span><span class="text-2xl font-bold text-slate-800" id="stat-td">0.0</span></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-chart-line-up"></i></div>
+                        <div><span class="text-[11px] font-medium text-slate-400 block">ĐTB Kinh Doanh</span><span class="text-2xl font-bold text-slate-800" id="stat-kd">0.0</span></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                        <h3 class="text-xs font-semibold text-slate-700 mb-4 flex items-center gap-2"><i class="fa-solid fa-chart-bar text-indigo-500"></i> Số lượng nhân sự theo từng Vị trí & Khu vực</h3>
+                        <div class="h-64 flex items-center justify-center"><canvas id="chart-soluong"></canvas></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                        <h3 class="text-xs font-semibold text-slate-700 mb-4 flex items-center gap-2"><i class="fa-solid fa-chart-line text-emerald-500"></i> Điểm trung bình năng lực theo từng Khu vực</h3>
+                        <div class="h-64 flex items-center justify-center"><canvas id="chart-diem-trungbinh"></canvas></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-department" class="tab-content hidden space-y-6">
+                <div>
+                    <h2 id="dept-title" class="text-2xl font-bold text-slate-800">Tên Vị Trí Phòng Ban</h2>
+                    <p class="text-xs text-slate-400 mt-1">Hệ thống biểu đồ năng lực trực quan của từng nhân sự, click chọn tên nhân viên để hiển thị sơ đồ Radar Chart</p>
+                </div>
+                
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm h-[560px] flex flex-col">
+                        <h3 class="text-xs font-semibold text-slate-700 mb-3 flex items-center gap-2"><i class="fa-solid fa-address-book text-indigo-500"></i> Danh sách nhân sự thực tế</h3>
+                        <div id="user-list" class="flex-1 overflow-y-auto space-y-1.5 pr-2">
+                            </div>
+                    </div>
+                    <div class="xl:col-span-2 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                        <h3 id="radar-title" class="text-xs font-semibold text-slate-700 mb-4"><i class="fa-solid fa-circle-nodes text-purple-500 mr-1"></i> Biểu đồ Radar năng lực</h3>
+                        <div class="w-full max-w-sm mx-auto flex items-center justify-center min-h-[360px]">
+                            <canvas id="chart-radar-individual"></canvas>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-50 grid grid-cols-3 gap-4 text-center text-xs">
+                            <div class="bg-slate-50 p-2.5 rounded-xl"><span class="text-slate-400 block text-[10px]">Văn Hóa FPT</span><span class="font-bold text-slate-800" id="lbl-vh">0.0</span></div>
+                            <div class="bg-slate-50 p-2.5 rounded-xl"><span class="text-slate-400 block text-[10px]">Tuyển Dụng</span><span class="font-bold text-slate-800" id="lbl-td">0.0</span></div>
+                            <div class="bg-slate-50 p-2.5 rounded-xl"><span class="text-slate-400 block text-[10px]">Kinh Doanh</span><span class="font-bold text-slate-800" id="lbl-kd">0.0</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // --- CHỨC NĂNG 1: QUẢN LÝ ĐĂNG NHẬP ---
+        function handleLogin() {
+            const email = document.getElementById('email').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            if(email === 'anhthunguyen.haitrieu@gmail.com' && pass === '123456') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                initTrangChu();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+        function logout() {
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('hidden');
+        }
+
+        // --- CHỨC NĂNG 2: CHUYỂN TRANG CHUYÊN NGHIỆP (TAB CODES) ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'font-semibold');
+                if(btn.getAttribute('data-tab') === tabName) btn.classList.add('bg-indigo-50', 'text-indigo-600', 'font-semibold');
+            });
+
+            if(tabName === 'trang-chu') {
+                document.getElementById('tab-trang-chu').classList.remove('hidden');
+                document.getElementById('tab-department').classList.add('hidden');
+                initTrangChu();
+            } else {
+                document.getElementById('tab-trang-chu').classList.add('hidden');
+                document.getElementById('tab-department').classList.remove('hidden');
+                setupDepartmentPage(tabName);
+            }
+        }
+
+        // --- CHỨC NĂNG 3: TÍNH TOÁN DỮ LIỆU THỰC TẾ & VẼ BIỂU ĐỒ TRANG CHỦ ---
+        let chartSL, chartTBC;
+        function initTrangChu() {
+            const listG_HCM = evaluationData.gdoc_hcm;
+            const listG_DNB = evaluationData.gdoc_dnb;
+            const listT_HCM = evaluationData.tpkd_hcm;
+            const listT_DNB = evaluationData.tpkd_dnb;
+
+            const totalStaff = listG_HCM.length + listG_DNB.length + listT_HCM.length + listT_DNB.length;
+            document.getElementById('stat-total').innerText = totalStaff;
+
+            // Thuật toán quét vòng lặp tính Điểm trung bình thực tế từ các file đính kèm
+            let sumVH = 0, sumTD = 0, sumKD = 0;
+            const allStaff = [...listG_HCM, ...listG_DNB, ...listT_HCM, ...listT_DNB];
+            allStaff.forEach(s => {
+                sumVH += s.van_hoa; sumTD += s.tuyen_dung; sumKD += s.kinh_doanh;
+            });
+            document.getElementById('stat-vh').innerText = (sumVH / totalStaff).toFixed(2);
+            document.getElementById('stat-td').innerText = (sumTD / totalStaff).toFixed(2);
+            document.getElementById('stat-kd').innerText = (sumKD / totalStaff).toFixed(2);
+
+            // Tính điểm trung bình theo từng khu vực (HCM vs Đông Nam Bộ) để vẽ biểu đồ đường trực quan
+            let hcmVH = 0, hcmTD = 0, hcmKD = 0, countHCM = listG_HCM.length + listT_HCM.length;
+            [...listG_HCM, ...listT_HCM].forEach(s => { hcmVH += s.van_hoa; hcmTD += s.tuyen_dung; hcmKD += s.kinh_doanh; });
+            
+            let dnbVH = 0, dnbTD = 0, dnbKD = 0, countDNB = listG_DNB.length + listT_DNB.length;
+            [...listG_DNB, ...listT_DNB].forEach(s => { dnbVH += s.van_hoa; dnbTD += s.tuyen_dung; dnbKD += s.kinh_doanh; });
+
+            if(chartSL) chartSL.destroy();
+            if(chartTBC) chartTBC.destroy();
+
+            // Vẽ Biểu Đồ Số Lượng Nhân Sự Cột Kép
+            chartSL = new Chart(document.getElementById('chart-soluong'), {
+                type: 'bar',
+                data: {
+                    labels: ['Giám Đốc Chi Nhánh', 'Trưởng Phòng Kinh Doanh'],
+                    datasets: [
+                        { label: 'Khu Vực Hồ Chí Minh', data: [listG_HCM.length, listT_HCM.length], backgroundColor: '#6366f1', borderRadius: 6 },
+                        { label: 'Khu Vực Đông Nam Bộ', data: [listG_DNB.length, listT_DNB.length], backgroundColor: '#10b981', borderRadius: 6 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Lexend', size: 10 } } } } }
+            });
+
+            // Vẽ Biểu Đồ Đường Xu Hướng Năng Lực Trung Bình Khu Vực
+            chartTBC = new Chart(document.getElementById('chart-diem-trungbinh'), {
+                type: 'line',
+                data: {
+                    labels: ['Văn Hoá FPT', 'Tuyển Dụng', 'Kinh Doanh'],
+                    datasets: [
+                        { label: 'Điểm Chuẩn Định Biên', data: [3, 3, 3], borderColor: '#94a3b8', borderDash: [6, 6], fill: false, tension: 0.1 },
+                        { label: 'Điểm TB Khu Vực HCM', data: [(hcmVH/countHCM).toFixed(2), (hcmTD/countHCM).toFixed(2), (hcmKD/countHCM).toFixed(2)], borderColor: '#4338ca', fill: false, tension: 0.2 },
+                        { label: 'Điểm TB Khu Vực DNB', data: [(dnbVH/countDNB).toFixed(2), (dnbTD/countDNB).toFixed(2), (dnbKD/countDNB).toFixed(2)], borderColor: '#059669', fill: false, tension: 0.2 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Lexend', size: 10 } } } } }
+            });
+        }
+
+        // --- CHỨC NĂNG 4: XỬ LÝ TRANG DANH SÁCH CHI TIẾT & BIỂU ĐỒ RADAR TỪNG NHÂN SỰ ---
+        let radarChart;
+        function setupDepartmentPage(tabName) {
+            let title = "", dataKey = "";
+            if(tabName === 'gd-hcm') { title = "Kết Quả Đánh Giá: Giám Đốc Chi Nhánh - Hồ Chí Minh"; dataKey = "gdoc_hcm"; }
+            if(tabName === 'gd-dnb') { title = "Kết Quả Đánh Giá: Giám Đốc Chi Nhánh - Đông Nam Bộ"; dataKey = "gdoc_dnb"; }
+            if(tabName === 'tp-hcm') { title = "Kết Quả Đánh Giá: Trưởng Phòng Kinh Doanh - Hồ Chí Minh"; dataKey = "tpkd_hcm"; }
+            if(tabName === 'tp-dnb') { title = "Kết Quả Đánh Giá: Trưởng Phòng Kinh Doanh - Đông Nam Bộ"; dataKey = "tpkd_dnb"; }
+
+            document.getElementById('dept-title').innerText = title;
+            const listContainer = document.getElementById('user-list');
+            listContainer.innerHTML = ""; 
+
+            const users = evaluationData[dataKey];
+            
+            users.forEach((user, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-4 py-3 rounded-xl text-xs font-medium transition flex items-center justify-between border ${idx === 0 ? 'bg-indigo-50 border-indigo-100 text-indigo-600 font-semibold' : 'text-slate-600 border-slate-50 hover:bg-slate-50'}`;
+                btn.innerHTML = `<span><i class="fa-regular fa-user-circle text-sm mr-2 opacity-80"></i>${user.name}</span> <i class="fa-solid fa-angle-right text-[10px] opacity-40"></i>`;
+                
+                btn.onclick = () => {
+                    document.querySelectorAll('#user-list button').forEach(b => {
+                        b.className = "w-full text-left px-4 py-3 rounded-xl text-xs font-medium text-slate-600 transition flex items-center justify-between border border-slate-50 hover:bg-slate-50";
+                    });
+                    btn.className = "w-full text-left px-4 py-3 rounded-xl text-xs font-medium bg-indigo-50 border border-indigo-100 text-indigo-600 font-semibold transition flex items-center justify-between";
+                    updateRadarChart(user);
+                };
+                listContainer.appendChild(btn);
+            });
+
+            if(users.length > 0) updateRadarChart(users[0]);
+        }
+
+        function updateRadarChart(user) {
+            document.getElementById('radar-title').innerHTML = `<i class="fa-solid fa-circle-nodes text-purple-500 mr-1"></i> Biểu đồ Radar năng lực nhân sự: <span class="text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded-md ml-1">${user.name}</span>`;
+            
+            // Cập nhật nhãn số liệu nhanh dưới chân biểu đồ
+            document.getElementById('lbl-vh').innerText = user.van_hoa;
+            document.getElementById('lbl-td').innerText = user.tuyen_dung;
+            document.getElementById('lbl-kd').innerText = user.kinh_doanh;
+
+            if(radarChart) radarChart.destroy();
+            
+            radarChart = new Chart(document.getElementById('chart-radar-individual'), {
+                type: 'radar',
+                data: {
+                    labels: ['Văn Hoá FPT', 'Tuyển Dụng', 'Kinh Doanh'],
+                    datasets: [
+                        {
+                            label: 'Điểm Đánh Giá Thực Tế',
+                            data: [user.van_hoa, user.tuyen_dung, user.kinh_doanh],
+                            backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                            borderColor: '#6366f1',
+                            pointBackgroundColor: '#4f46e5',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#4f46e5',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Điểm Chuẩn Năng Lực',
+                            data: [user.van_hoa_chuan, user.tuyen_dung_chuan, user.kinh_doanh_chuan],
+                            backgroundColor: 'rgba(148, 163, 184, 0.05)',
+                            borderColor: '#94a3b8',
+                            pointBackgroundColor: '#94a3b8',
+                            borderDash: [4, 4],
+                            borderWidth: 1.5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#f1f5f9' },
+                            grid: { color: '#e2e8f0' },
+                            pointLabels: { font: { family: 'Lexend', size: 11, weight: '500' }, color: '#334155' },
+                            suggestMin: 0,
+                            suggestMax: 3
+                        }
+                    },
+                    plugins: { legend: { position: 'top', labels: { font: { family: 'Lexend', size: 10 } } } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
